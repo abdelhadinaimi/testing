@@ -1,11 +1,9 @@
 name: Run Linter
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
+
 
 jobs:
   pr-lint:
@@ -14,9 +12,9 @@ jobs:
       - uses: morrisoncole/pr-lint-action@v1.7.0
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          title-regex: "(feat|fix): [\\w ]{3,}.( \\#LB-\\d{3})?( \\(\\#\\d+\\))?"
-          on-failed-regex-create-review: false
-          on-failed-regex-request-changes: false
+          title-regex: "(feat|fix): [\\w ]{3,}.( \\#LB-\\d{3})?"
+          on-failed-regex-create-review: true
+          on-failed-regex-request-changes: true
           on-failed-regex-fail-action: true
           on-failed-regex-comment:
             "The pattern for the pull request is not respected: `%regex%`!"
