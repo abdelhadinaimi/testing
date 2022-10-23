@@ -1,0 +1,45 @@
+name: Run Linter
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  pr-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: morrisoncole/pr-lint-action@v1.7.0
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          title-regex: "(feat|fix): [\\w ]{3,}.( \\#LB-\\d{3})?( \\(\\#\\d+\\))?"
+          on-failed-regex-create-review: false
+          on-failed-regex-request-changes: false
+          on-failed-regex-fail-action: true
+          on-failed-regex-comment:
+            "The pattern for the pull request is not respected: `%regex%`!"
+          on-succeeded-regex-dismiss-review-comment:
+            "Success! :)"
+  run-linters:
+    name: Run linters
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - name: Install Node.js dependencies
+        run: npm ci
+
+      - name: Run linters
+        uses: mansagroup/nrwl-nx-action@v2
+        with:
+          targets: lint
+          all: true
